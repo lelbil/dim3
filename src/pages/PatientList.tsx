@@ -5,6 +5,7 @@ import {Box} from "@mui/material";
 import ProtectedPageLayout from "./layouts/ProtectedPageLayout";
 import {getPatientList} from "../api/patient";
 import { PatientListItem } from "../types/Patient";
+import {ERROR_401} from "../consts";
 
 const columns: GridColDef<PatientListItem>[] = [
   {
@@ -39,8 +40,13 @@ const PatientList: React.FC = () => {
   }, [paginationModel.page, paginationModel.pageSize])
 
   useEffect(() => {
-    fetchPatients()
-  }, [fetchPatients]);
+    fetchPatients().catch(error => {
+      console.log('CATCHING AGAIN', error)
+      if (error?.toString() === 'Error: ' + ERROR_401) { // TODO: Can also implement an error boundary in ProtectedPageLayout
+        navigate('/');
+      }
+    });
+  }, [fetchPatients, navigate]);
 
   return ( // TODO: make row look clickable
     <ProtectedPageLayout title={"Patients"}>

@@ -1,4 +1,4 @@
-import {API_URL} from "../consts";
+import {API_URL, ERROR_401} from "../consts";
 
 export const callApi = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET', payload?: object) => {
   try {
@@ -14,9 +14,18 @@ export const callApi = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' |
       ...(payload ? { body: JSON.stringify(payload) } : {}),
     });
 
+    if (result.status === 401) {
+      // Token expired
+      sessionStorage.removeItem('token')
+      throw new Error(ERROR_401)
+    }
+
     return result.json()
   } catch (error) {
     console.error('Error occurred while calling', endpoint, error)
+    if (error?.toString() === 'Error: ' + ERROR_401) {
+      throw new Error(ERROR_401)
+    }
     return {
       error
     }
