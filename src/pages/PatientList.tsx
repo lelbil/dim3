@@ -1,63 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import React, {useCallback, useEffect, useState} from 'react';
+import {DataGrid, GridColDef, GridPaginationModel} from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom'
-import { PatientListItem } from "../types/Patient";
-import ProtectedPageLayout from "./layouts/ProtectedPageLayout";
 import {Box} from "@mui/material";
-
-const tempPatients = [
-  {
-    id: '1',
-    firstName: 'Billel',
-    lastName: 'ATTOUCHI',
-  },
-  {
-    id: '2',
-    firstName: 'Zoe',
-    lastName: 'Hollish',
-  },
-]
+import ProtectedPageLayout from "./layouts/ProtectedPageLayout";
+import {getPatientList} from "../api/patient";
+import { PatientListItem } from "../types/Patient";
 
 const columns: GridColDef<PatientListItem>[] = [
   {
-    field: 'id',
-    headerName: 'ID',
-    width: 90,
-  },
-  {
     field: 'firstName',
     headerName: 'First name',
-    width: 150,
+    width: 220,
   },
   {
     field: 'lastName',
     headerName: 'Last name',
-    width: 150,
+    width: 220,
+  },
+  {
+    field: 'id',
+    headerName: 'ID',
+    width: 330,
   },
 ]
 
 const PatientList: React.FC = () => {
   const navigate = useNavigate();
-  const [patients, setPatients] = useState<PatientListItem[]>(tempPatients); // []); // TODO: back to [] as initial state and delete temp
+  const [patients, setPatients] = useState<PatientListItem[]>([]);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({ page: 0, pageSize: 5 });
+  const [patientCount, setPatientCount] = useState(0)
 
-  // TODO: add pagination
+  const fetchPatients = useCallback(async () => {
+    const result = await getPatientList(paginationModel.page, paginationModel.pageSize)
+    const list = result?.content || []; // TODO: show error
+
+    setPatients(list)
+    setPatientCount(result?.totalElements ||0)
+  }, [paginationModel.page, paginationModel.pageSize])
 
   useEffect(() => {
-    // Fetch patients from the API and set them in state
-  }, []);
+    fetchPatients()
+  }, [fetchPatients]);
 
-  // TODO: pagination and sorting (backend)
   return ( // TODO: make row look clickable
     <ProtectedPageLayout title={"Patients"}>
       <Box mt={10} mx={{md: 5}}>
         <DataGrid<PatientListItem>
-        rows={patients}
-        columns={columns}
-        onRowClick={(row) => {
-          navigate('/patient/' + row.id)
-        }}
-        disableColumnMenu
-       />
+          rows={patients}
+          columns={columns}
+          onRowClick={(row) => {
+            navigate('/patient/' + row.id)
+          }}
+          disableColumnMenu
+          pagination
+          paginationMode="server"
+          pageSizeOptions={[5, 10, 25]}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          rowCount={patientCount}
+        />
       </Box>
     </ProtectedPageLayout>
   );

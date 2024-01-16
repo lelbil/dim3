@@ -1,19 +1,35 @@
 import React, { useState } from 'react';
-import { Button, Box } from '@mui/material';
+import {Box, Typography, Grid} from '@mui/material';
+import {useNavigate} from "react-router-dom";
+import { login } from "../api/login";
 import TextInputField from "../components/TextInputField";
 import Dim3Button from "../components/Dim3Button";
-
-// user name must be at least 3 characters
-// password must be defined
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
 
-  const handleLogin = () => {
-    // Login logic goes here
-    // TODO: handle error
+
+  const handleLogin = async () => {
+    setError('')
+    setLoading(true)
+
+    // Can also add validation step using a library like JOI or useForm and show errors on the field
+    const { error } = await login(username, password);
+
+    if (error) {
+      setError(error);
+    } else {
+      navigate('/patients')
+    }
+
+    setLoading(false)
   };
+
+  const isDisabled = loading || !username || username.length > 3 || !password
 
   return (
     <Box sx={{ // TODO: use Grid instead?
@@ -36,7 +52,15 @@ const LoginPage: React.FC = () => {
         setValue={setPassword}
         type="password"
       />
-      <Dim3Button onClick={handleLogin} text={"Login"} />
+      <Grid
+        container
+        width={'40%'}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <Typography variant={"body2"} color={"red"} ml={2}>{error}</Typography>
+        <Dim3Button onClick={handleLogin} text={"Login"} disabled={isDisabled}/>
+      </Grid>
     </Box>
   );
 };

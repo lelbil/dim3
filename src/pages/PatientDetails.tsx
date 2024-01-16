@@ -4,22 +4,25 @@ import {Patient} from "../types/Patient";
 import ProtectedPageLayout from "./layouts/ProtectedPageLayout";
 import InfoField from "../components/InfoField";
 import {Grid} from "@mui/material";
-
-const tempPatient: Patient = {
-  id: '1',
-  firstName: 'Billel',
-  lastName: 'ATTOUCHI',
-  age: 27,
-  gender: "M",
-}
+import {getPatientDetails} from "../api/patient";
+import {calculateAge} from "../utils";
 
 const PatientDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [patientDetails, setPatientDetails] = useState<Patient | null>(tempPatient) //null); // TODO: delete temp
+  const [patientDetails, setPatientDetails] = useState<Patient | null>(null);
 
   useEffect(() => {
-    // Fetch patient details based on the id from the API and set them in state
+    if (!id) {
+      return;
+    }
+
+    getPatientDetails(id).then(res => {
+      setPatientDetails({
+        ...res,
+        age: calculateAge(res.birthDate)
+      })
+    })
   }, [id]);
 
   const goBackToPatients = () => {
@@ -42,7 +45,7 @@ const PatientDetails: React.FC = () => {
           {patientDetails?.age}
         </InfoField>
         <InfoField label={"gender"} loading={!patientDetails}>
-          {patientDetails?.gender}
+          {patientDetails?.sex}
         </InfoField>
       </Grid>
     </ProtectedPageLayout>
