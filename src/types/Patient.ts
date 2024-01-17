@@ -6,4 +6,4 @@ export interface Patient {
   age: number;
 }
 
-export type PatientListItem = Pick<Patient, "id" | "firstName" | "lastName">
+export type PatientListItem = Pick<Patient, "id" | "firstName" | "lastName">;

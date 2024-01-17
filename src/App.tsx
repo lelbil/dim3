@@ -1,8 +1,8 @@
-import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import PatientList from './pages/PatientList';
-import PatientDetails from './pages/PatientDetails';
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import PatientList from "./pages/PatientList";
+import PatientDetails from "./pages/PatientDetails";
 
 const router = createBrowserRouter([
   {
@@ -20,9 +20,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return (
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

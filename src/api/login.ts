@@ -1,12 +1,15 @@
-import {API_URL} from "../consts";
+import { API_URL } from "../consts";
 
-export const login = async (username: string, password: string): Promise<{ error: null | string }> => {
+export const login = async (
+  username: string,
+  password: string,
+): Promise<{ error: null | string }> => {
   try {
-    const response = await fetch(API_URL + '/token-auth', {
-      method: 'POST',
+    const response = await fetch(API_URL + "/token-auth", {
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-type': 'application/json',
+        Accept: "application/json",
+        "Content-type": "application/json",
       },
       body: JSON.stringify({
         username,
@@ -16,21 +19,21 @@ export const login = async (username: string, password: string): Promise<{ error
 
     if (response.status === 401) {
       return {
-        error: 'Wrong username or password. Try again',
+        error: "Wrong username or password. Try again",
       };
     }
 
     const { token } = await response.json();
-    sessionStorage.setItem('token', token)
+    sessionStorage.setItem("token", token);
 
     return {
-      error: null
-    }
+      error: null,
+    };
   } catch (error) {
-    console.error('Error while trying to sign in', error);
+    console.error("Error while trying to sign in", error);
 
     return {
-      error: 'Error while signing in. Please try again or contact admin',
+      error: "Error while signing in. Please try again or contact admin",
     };
   }
-}
+};

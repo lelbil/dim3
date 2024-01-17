@@ -1,4 +1,4 @@
-import {TextField, TextFieldProps} from "@mui/material";
+import { TextField, TextFieldProps } from "@mui/material";
 import React from "react";
 
 type TextInputFieldProps = TextFieldProps & {
@@ -12,8 +12,8 @@ const TextInputField: React.FC<TextInputFieldProps> = ({
   <TextField
     variant="outlined"
     sx={{
-      width: '40%',
-      ...props.sx
+      width: "40%",
+      ...props.sx,
     }}
     {...props}
     onChange={(e) => setValue(e.target.value)}

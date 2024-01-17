@@ -10,4 +10,4 @@ export const calculateAge = (birthDate: string): number => {
   }
 
   return age;
-}
+};
